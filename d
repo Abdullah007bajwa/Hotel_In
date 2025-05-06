@@ -1,0 +1,1 @@
+Get-ChildItem "C:\path\to\your\directory" -Name

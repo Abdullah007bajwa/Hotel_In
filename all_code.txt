@@ -1,0 +1,1825 @@
+﻿
+--- F:\hotel_in\lib\main.dart ---
+
+// â”€â”€â”€ Crafted by Abdullah Studentâ€™s Hotel In SquadÂ® â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+import 'package:flutter/material.dart';
+import 'theme/app_theme.dart';
+import 'router/app_router.dart';
+
+void main() => runApp(const HotelInApp());
+
+class HotelInApp extends StatelessWidget {
+  const HotelInApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      title: 'Hotel In',
+      theme: AppTheme.light,
+      routerConfig: AppRouter,
+    );
+  }
+}
+
+--- F:\hotel_in\lib\gen\assets.gen.dart ---
+
+/// GENERATED CODE - DO NOT MODIFY BY HAND
+/// *****************************************************
+///  FlutterGen
+/// *****************************************************
+
+// coverage:ignore-file
+// ignore_for_file: type=lint
+// ignore_for_file: directives_ordering,unnecessary_import,implicit_dynamic_list_literal,deprecated_member_use
+
+class Assets {
+  const Assets._();
+}
+
+--- F:\hotel_in\lib\router\app_router.dart ---
+
+// â”€â”€â”€ Crafted by Abdullah Studentâ€™s QuickStay SquadÂ® â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+import 'package:go_router/go_router.dart';
+import '../screens/main_screen.dart';
+import '../screens/results_screen.dart';
+import '../screens/detail_screen.dart';
+
+final AppRouter = GoRouter(
+  initialLocation: '/',
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (ctx, state) => const MainScreen(),
+      routes: [
+        GoRoute(
+          path: 'results',
+          builder: (ctx, state) => const ResultsScreen(),
+        ),
+        GoRoute(
+          path: 'details/:id',
+          builder: (ctx, state) {
+            final id = state.pathParameters['id']!;
+            return DetailScreen(propertyId: id);
+          },
+        ),
+      ],
+    ),
+  ],
+);
+
+--- F:\hotel_in\lib\screens\detail_screen.dart ---
+
+// â”€â”€â”€ Crafted by Abdullah Studentâ€™s Hotel In SquadÂ® â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:hotel_in/theme/app_theme.dart';
+import '../widgets/custom_button.dart';
+
+class DetailScreen extends StatelessWidget {
+  final String propertyId;
+  // Mock data â€“ swap these for your real model
+  final List<String> imageUrls;
+  final int pricePerNight;
+  final double rating;
+  final int reviewsCount;
+  final List<IconData> amenities;
+  final List<String> amenitiesLabels;
+
+  const DetailScreen({
+    super.key,
+    required this.propertyId,
+    this.imageUrls = const [
+      'https://via.placeholder.com/600x400',
+      'https://via.placeholder.com/600x400/CCCCCC',
+      'https://via.placeholder.com/600x400/AAAAAA',
+    ],
+    this.pricePerNight = 120,
+    this.rating = 4.6,
+    this.reviewsCount = 128,
+    this.amenities = const [
+      Icons.wifi,
+      Icons.pool,
+      Icons.ac_unit,
+      Icons.local_parking,
+      Icons.pets,
+    ],
+    this.amenitiesLabels = const [
+      'Wiâ€‘Fi',
+      'Pool',
+      'AC',
+      'Parking',
+      'Petâ€‘friendly',
+    ],
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = Theme.of(context).extension<HotelInTokens>()!;
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            expandedHeight: 300,
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text('Hotel In â€¢ #$propertyId',
+                  style: Theme.of(context).textTheme.titleMedium),
+              background: _buildImageCarousel(tokens),
+              collapseMode: CollapseMode.parallax,
+            ),
+          ),
+
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.all(tokens.padM),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildPriceRating(context, tokens),
+                  SizedBox(height: tokens.padL),
+                  _buildDescription(context),
+                  SizedBox(height: tokens.padL),
+                  Text('Amenities', style: Theme.of(context).textTheme.titleMedium),
+                  SizedBox(height: tokens.padS),
+                  _buildAmenitiesGrid(context, tokens),
+                  SizedBox(height: tokens.padL),
+                  _buildBookingSection(tokens),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImageCarousel(HotelInTokens tokens) {
+    return PageView.builder(
+      itemCount: imageUrls.length,
+      itemBuilder: (ctx, i) => ClipRRect(
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(tokens.radius),
+          bottomRight: Radius.circular(tokens.radius),
+        ),
+        child: CachedNetworkImage(
+          imageUrl: imageUrls[i],
+          fit: BoxFit.cover,
+          placeholder: (_, __) => Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: Container(color: Colors.white),
+          ),
+          errorWidget: (_, __, ___) => Center(child: Icon(Icons.error_outline)),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPriceRating(BuildContext context, HotelInTokens tokens) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // Price
+        Expanded(
+          child: Text(
+            '\$$pricePerNight / night',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+        ),
+
+        // Rating + Reviews
+        Row(
+          children: [
+            Icon(Icons.star, size: 20, color: Colors.amber),
+            SizedBox(width: tokens.padS / 2),
+            Text(rating.toStringAsFixed(1),
+                style: Theme.of(context).textTheme.bodyMedium),
+            SizedBox(width: tokens.padS / 2),
+            Text('($reviewsCount)', style: Theme.of(context).textTheme.bodySmall),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDescription(BuildContext context) {
+    return Text(
+      'Enjoy a luxurious experience at our premium property. Spacious rooms, '
+      'modern amenities, and breathtaking views await you.',
+      style: Theme.of(context)
+          .textTheme
+          .bodyMedium
+          ?.copyWith(height: 1.5),
+    );
+  }
+
+  Widget _buildAmenitiesGrid(BuildContext context, HotelInTokens tokens) {
+    return Wrap(
+      spacing: tokens.padM,
+      runSpacing: tokens.padM,
+      children: amenities.asMap().entries.map((entry) {
+        final i = entry.key;
+        final icon = entry.value;
+        return Container(
+          width: 100,
+          height: 100,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(tokens.radius),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 32, color: Theme.of(context).colorScheme.primary),
+              SizedBox(height: tokens.padS),
+              Text(
+                amenitiesLabels[i],
+                style: Theme.of(context).textTheme.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildBookingSection(HotelInTokens tokens) {
+    return Center(
+      child: CustomButton(
+        label: 'Book Now',
+        leadingIcon: const Icon(Icons.payment),
+        padding:
+            EdgeInsets.symmetric(vertical: tokens.padM, horizontal: tokens.padL),
+        onPressed: () {
+          // TODO: implement booking flow
+        },
+      ),
+    );
+  }
+}
+
+--- F:\hotel_in\lib\screens\favorites_screen.dart ---
+
+// â”€â”€ Â©HotelIn by Abdullah Studentâ„¢ â”€â”€ FavoritesScreen â”€â”€
+
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../theme/app_theme.dart';
+import '../widgets/property_card.dart';
+import '../widgets/custom_button.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+class FavoritesScreen extends StatefulWidget {
+  const FavoritesScreen({super.key});
+
+  @override
+  State<FavoritesScreen> createState() => _FavoritesScreenState();
+}
+
+class _FavoritesScreenState extends State<FavoritesScreen> {
+  late Future<List<_Favorite>> _favoritesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _favoritesFuture = _loadFavorites();
+  }
+
+  Future<List<_Favorite>> _loadFavorites() async {
+    // Simulate network/database fetch
+    await Future.delayed(const Duration(milliseconds: 800));
+    // TODO: replace with real data source
+    return [
+      _Favorite(id: '1', title: 'Seaside Retreat', image: 'assets/roomImg1.png', price: 135, rating: 4.8),
+      _Favorite(id: '2', title: 'Mountain Cabin', image: 'assets/roomImg2.png', price: 110, rating: 4.5),
+      _Favorite(id: '3', title: 'Urban Loft',    image: 'assets/roomImg3.png', price: 155, rating: 4.7),
+      _Favorite(id: '4', title: 'Cozy Bungalow', image: 'assets/roomImg4.png', price: 125, rating: 4.6),
+    ];
+  }
+
+  Future<void> _refresh() async {
+    setState(() => _favoritesFuture = _loadFavorites());
+    await _favoritesFuture;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final tokens = theme.extension<HotelInTokens>()!;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Your Favorites', style: theme.textTheme.headlineSmall),
+        elevation: 0,
+      ),
+      body: FutureBuilder<List<_Favorite>>(
+        future: _favoritesFuture,
+        builder: (ctx, snap) {
+          if (snap.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator(color: theme.colorScheme.primary));
+          }
+          if (snap.hasError) {
+            return Center(
+              child: Padding(
+                padding: EdgeInsets.all(tokens.padM),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SvgPicture.asset('assets/closeIcon.svg', width: 48, height: 48, color: theme.colorScheme.error),
+                    SizedBox(height: tokens.padM),
+                    Text('Failed to load favorites.', style: theme.textTheme.bodyMedium),
+                    SizedBox(height: tokens.padM),
+                    CustomButton(
+                      label: 'Retry',
+                      onPressed: _refresh,
+                      padding: EdgeInsets.symmetric(horizontal: tokens.padM, vertical: tokens.padS),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+          final favs = snap.data!;
+          if (favs.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: tokens.padM),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SvgPicture.asset('assets/heartIcon.svg', width: 72, height: 72, color: Colors.grey.shade400),
+                    SizedBox(height: tokens.padM),
+                    Text('No favorites yet', style: theme.textTheme.titleMedium),
+                    SizedBox(height: tokens.padS),
+                    Text(
+                      'Tap the heart on any property to save it here.',
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    SizedBox(height: tokens.padL),
+                    CustomButton(
+                      label: 'Browse Properties',
+                      leadingIcon: const Icon(Icons.search),
+                      onPressed: () => GoRouter.of(context).go('/'),
+                      padding: EdgeInsets.symmetric(horizontal: tokens.padM, vertical: tokens.padS),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+          return RefreshIndicator(
+            onRefresh: _refresh,
+            color: theme.colorScheme.primary,
+            child: Padding(
+              padding: EdgeInsets.all(tokens.padM),
+              child: GridView.builder(
+                itemCount: favs.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: tokens.padM,
+                  mainAxisSpacing: tokens.padM,
+                  childAspectRatio: 0.75,
+                ),
+                itemBuilder: (ctx, i) {
+                  final f = favs[i];
+                  return GestureDetector(
+                    onTap: () => GoRouter.of(context).go('/details/${f.id}'),
+                    child: PropertyCard(
+                      id: f.id,
+                      title: f.title,
+                      imageUrl: f.image,
+                      price: '\$${f.price}',
+                      rating: f.rating,
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// Simple model for favorite items
+class _Favorite {
+  final String id;
+  final String title;
+  final String image;
+  final int price;
+  final double rating;
+
+  const _Favorite({
+    required this.id,
+    required this.title,
+    required this.image,
+    required this.price,
+    required this.rating,
+  });
+}
+
+--- F:\hotel_in\lib\screens\main_screen.dart ---
+
+// â”€â”€â”€ Crafted by Abdullah Studentâ€™s Hotel In SquadÂ® â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+import 'package:flutter/material.dart';
+import 'package:hotel_in/theme/app_theme.dart';
+import 'search_screen.dart';
+import 'favorites_screen.dart';
+import 'trips_screen.dart';
+import 'profile_screen.dart';
+
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  int _currentIndex = 0;
+  static const _pages = [
+    SearchScreen(),
+    FavoritesScreen(),
+    TripsScreen(),
+    ProfileScreen(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final tokens = theme.extension<HotelInTokens>()!;
+    final colorScheme = theme.colorScheme;
+
+    return Scaffold(
+      // Use IndexedStack to preserve each page's state
+      body: SafeArea(
+        child: IndexedStack(
+          index: _currentIndex,
+          children: _pages,
+        ),
+      ),
+
+      // Padded BottomNavigationBar for comfortable touch targets
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.fromLTRB(tokens.padM, 0, tokens.padM, tokens.padS),
+        child: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (i) => setState(() => _currentIndex = i),
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: colorScheme.background,
+          selectedItemColor: colorScheme.primary,
+          unselectedItemColor: Colors.grey,
+          selectedLabelStyle: theme.textTheme.bodySmall,
+          unselectedLabelStyle: theme.textTheme.bodySmall,
+          showUnselectedLabels: true,
+          elevation: 8,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.search_outlined),
+              activeIcon: Icon(Icons.search),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite_border),
+              activeIcon: Icon(Icons.favorite),
+              label: 'Favorites',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.card_travel_outlined),
+              activeIcon: Icon(Icons.card_travel),
+              label: 'Trips',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline),
+              activeIcon: Icon(Icons.person),
+              label: 'Profile',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+--- F:\hotel_in\lib\screens\profile_screen.dart ---
+
+// â”€â”€ Â©HotelIn by Abdullah Studentâ„¢ â”€â”€ ProfileScreen â”€â”€
+
+// ignore_for_file: deprecated_member_use
+
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../theme/app_theme.dart';
+import '../widgets/custom_button.dart';
+
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final tokens = theme.extension<HotelInTokens>()!;
+
+    // TODO: Replace with actual user model / provider
+    const avatarUrl = 'https://via.placeholder.com/120';
+    const name = 'Abdullah Bajwa';
+    const email = 'abdullah.bajwa@example.com';
+    const stats = {
+      'Bookings': 12,
+      'Favorites': 5,
+      'Reviews': 8,
+    };
+
+    Widget buildStat(String label, int value) {
+      return Column(
+        children: [
+          Text(
+            value.toString(),
+            style: theme.textTheme.headlineSmall?.copyWith(fontSize: 24),
+          ),
+          const SizedBox(height: 4),
+          Text(label, style: theme.textTheme.bodySmall),
+        ],
+      );
+    }
+
+    Widget buildOption(IconData icon, String label, String route) {
+      return ListTile(
+        leading: Icon(icon, color: theme.colorScheme.primary),
+        title: Text(label, style: theme.textTheme.bodyMedium),
+        trailing: Icon(Icons.chevron_right, color: Colors.grey),
+        onTap: () => GoRouter.of(context).go(route),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: tokens.padM,
+          vertical: tokens.padS,
+        ),
+      );
+    }
+
+    return SafeArea(
+      child: Scaffold(
+        body: Column(
+          children: [
+            // Header with colored accent background
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(
+                vertical: tokens.padL,
+                horizontal: tokens.padM,
+              ),
+              color: theme.colorScheme.secondary.withOpacity(0.1),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage: NetworkImage(avatarUrl),
+                  ),
+                  SizedBox(width: tokens.padM),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(name,
+                            style: theme.textTheme.displayLarge
+                                ?.copyWith(fontSize: 22, color: theme.colorScheme.onBackground)),
+                        const SizedBox(height: 4),
+                        Text(email, style: theme.textTheme.bodySmall),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Stats Row
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: tokens.padM),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: stats.entries
+                    .map((e) => buildStat(e.key, e.value))
+                    .toList(),
+              ),
+            ),
+
+            const Divider(thickness: 1),
+
+            // Options List
+            Expanded(
+              child: ListView(
+                children: [
+                  buildOption(Icons.payment, 'Payment Methods', '/payment-methods'),
+                  buildOption(Icons.settings, 'App Settings', '/settings'),
+                  buildOption(Icons.support_agent, 'Help & Support', '/support'),
+                  SizedBox(height: tokens.padL),
+
+                  // Logout button
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: tokens.padM),
+                    child: CustomButton(
+                      label: 'Log Out',
+                      leadingIcon: const Icon(Icons.logout),
+                      padding: EdgeInsets.symmetric(
+                        vertical: tokens.padS, horizontal: tokens.padM),
+                      onPressed: () async {
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: const Text('Log Out?'),
+                            content: const Text('Are you sure you want to log out?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(ctx).pop(false),
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.of(ctx).pop(true),
+                                child: const Text('Log Out'),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirm == true) {
+                          // TODO: perform actual sign-out (e.g. auth.signOut())
+                          // then navigate to login
+                          GoRouter.of(context).go('/login');
+                        }
+                      },
+                    ),
+                  ),
+                  SizedBox(height: tokens.padL),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+--- F:\hotel_in\lib\screens\results_screen.dart ---
+
+// â”€â”€ Â©HotelIn by Abdullah Studentâ„¢ â”€â”€ ResultsScreen â”€â”€
+
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shimmer/shimmer.dart';
+import '../theme/app_theme.dart';
+import '../widgets/property_card.dart';
+
+class Property {
+  final String id;
+  final String title;
+  final String imageAsset;
+  final int price;
+  final double rating;
+
+  const Property({
+    required this.id,
+    required this.title,
+    required this.imageAsset,
+    required this.price,
+    required this.rating,
+  });
+}
+
+class ResultsScreen extends StatefulWidget {
+  const ResultsScreen({super.key});
+
+  @override
+  State<ResultsScreen> createState() => _ResultsScreenState();
+}
+
+class _ResultsScreenState extends State<ResultsScreen> {
+  late Future<List<Property>> _propertiesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _propertiesFuture = _loadProperties();
+  }
+
+  Future<List<Property>> _loadProperties() async {
+    // simulate network delay
+    await Future.delayed(const Duration(seconds: 1));
+    // using local assets for premium look
+    final assets = [
+      'assets/roomImg1.png',
+      'assets/roomImg2.png',
+      'assets/roomImg3.png',
+      'assets/roomImg4.png',
+    ];
+    return List.generate(8, (i) {
+      final idx = i % assets.length;
+      return Property(
+        id: '${i + 1}',
+        title: 'Room Deluxe #${i + 1}',
+        imageAsset: assets[idx],
+        price: 100 + idx * 25,
+        rating: 4.0 + (idx * 0.2),
+      );
+    });
+  }
+
+  Future<void> _refresh() async {
+    setState(() => _propertiesFuture = _loadProperties());
+    await _propertiesFuture;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final tokens = theme.extension<HotelInTokens>()!;
+    final width = MediaQuery.of(context).size.width;
+    final crossCount = width > 600 ? 3 : 2;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Results', style: theme.textTheme.headlineSmall),
+        elevation: 0,
+      ),
+      body: FutureBuilder<List<Property>>(
+        future: _propertiesFuture,
+        builder: (ctx, snap) {
+          if (snap.connectionState == ConnectionState.waiting) {
+            return _buildShimmerGrid(tokens, crossCount);
+          }
+          if (snap.hasError) {
+            return Center(
+              child: Padding(
+                padding: EdgeInsets.all(tokens.padM),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
+                    SizedBox(height: tokens.padS),
+                    Text('Failed to load properties.', style: theme.textTheme.bodyMedium),
+                    SizedBox(height: tokens.padM),
+                    ElevatedButton(onPressed: _refresh, child: const Text('Retry')),
+                  ],
+                ),
+              ),
+            );
+          }
+          final props = snap.data!;
+          return RefreshIndicator(
+            onRefresh: _refresh,
+            color: theme.colorScheme.primary,
+            child: Padding(
+              padding: EdgeInsets.all(tokens.padM),
+              child: GridView.builder(
+                itemCount: props.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossCount,
+                  crossAxisSpacing: tokens.padM,
+                  mainAxisSpacing: tokens.padM,
+                  childAspectRatio: 0.8,
+                ),
+                itemBuilder: (ctx, i) {
+                  final p = props[i];
+                  // animate each card in sequence
+                  return TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0, end: 1),
+                    duration: Duration(milliseconds: 300 + i * 50),
+                    builder: (context, val, child) {
+                      return Opacity(
+                        opacity: val,
+                        child: Transform.translate(
+                          offset: Offset(0, 30 * (1 - val)),
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: GestureDetector(
+                      onTap: () => GoRouter.of(context).go('/details/${p.id}'),
+                      child: PropertyCard(
+                        id: p.id,
+                        title: p.title,
+                        imageUrl: p.imageAsset,
+                        price: '\$${p.price}',
+                        rating: p.rating,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildShimmerGrid(HotelInTokens tokens, int crossCount) {
+    return Padding(
+      padding: EdgeInsets.all(tokens.padM),
+      child: GridView.builder(
+        itemCount: crossCount * 3,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: crossCount,
+          crossAxisSpacing: tokens.padM,
+          mainAxisSpacing: tokens.padM,
+          childAspectRatio: 0.8,
+        ),
+        itemBuilder: (_, __) => Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(tokens.radius),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+--- F:\hotel_in\lib\screens\search_screen.dart ---
+
+// â”€â”€ Â©HotelIn by Abdullah Studentâ„¢ â”€â”€ SearchScreen â”€â”€
+
+// ignore_for_file: deprecated_member_use
+
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../theme/app_theme.dart';
+import '../widgets/date_chips.dart';
+
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
+
+  @override
+  State<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen> {
+  final _destinationController = TextEditingController();
+  int _selectedDateIndex = 0;
+  late final List<DateTime> _dates;
+  late final List<String> _dateLabels;
+
+  @override
+  void initState() {
+    super.initState();
+    // Prepare next 4 days
+    final today = DateTime.now();
+    _dates = List.generate(4, (i) => today.add(Duration(days: i + 1)));
+    _dateLabels = _dates
+        .map((d) => DateFormat('EEE, MMM d').format(d))
+        .toList(growable: false);
+  }
+
+  @override
+  void dispose() {
+    _destinationController.dispose();
+    super.dispose();
+  }
+
+  void _goToResults() {
+    final dest = _destinationController.text.trim();
+    if (dest.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a destination.')),
+      );
+      return;
+    }
+    GoRouter.of(context).go(
+      '/results?destination=${Uri.encodeComponent(dest)}&date=${_dates[_selectedDateIndex].toIso8601String()}',
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final tokens = theme.extension<HotelInTokens>()!;
+    return Scaffold(
+      body: Stack(
+        children: [
+          // 1) Hero banner
+          SizedBox(
+            height: 280,
+            width: double.infinity,
+            child: Image.asset(
+              'assets/regImage.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          // 2) Glassmorphic overlay
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.black.withOpacity(0.5),
+                    Colors.transparent,
+                  ],
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                ),
+              ),
+            ),
+          ),
+
+          // 3) Content
+          SafeArea(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: tokens.padM),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: tokens.padL),
+                  Text(
+                    'Plan Your Next Trip',
+                    style: theme.textTheme.displayLarge?.copyWith(
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          blurRadius: 8,
+                          color: Colors.black87,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: tokens.padL),
+
+                  // 4) Glass Search Bar
+                  _GlassSearchBar(
+                    controller: _destinationController,
+                    onTapFilter: () {
+                      // TODO: open filters
+                    },
+                  ),
+
+                  SizedBox(height: tokens.padL),
+
+                  // 5) Date Chips
+                  DateChips(
+                    dates: _dateLabels,
+                    selectedIndex: _selectedDateIndex,
+                    onSelected: (i) => setState(() => _selectedDateIndex = i),
+                  ),
+
+                  const Spacer(),
+
+                  // 6) Show Results Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: _goToResults,
+                      icon: SvgPicture.asset(
+                        'assets/arrowIcon.svg',
+                        width: 20,
+                        height: 20,
+                        color: theme.colorScheme.onPrimary,
+                      ),
+                      label: const Text('Show Results'),
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(tokens.radius),
+                        ),
+                        backgroundColor: Color(0xFFD4AF37), // gold accent
+                        textStyle: theme.textTheme.titleMedium?.copyWith(
+                          color: theme.colorScheme.onPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: tokens.padL),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Glassmorphism search bar with assets
+class _GlassSearchBar extends StatelessWidget {
+  final TextEditingController controller;
+  final VoidCallback onTapFilter;
+
+  const _GlassSearchBar({
+    required this.controller,
+    required this.onTapFilter,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = Theme.of(context).extension<HotelInTokens>()!;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(tokens.radius * 1.5),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: tokens.padM),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.15),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.3),
+              width: 1,
+            ),
+            borderRadius: BorderRadius.circular(tokens.radius * 1.5),
+          ),
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                'assets/locationIcon.svg',
+                width: 24,
+                height: 24,
+                color: Colors.white,
+              ),
+              SizedBox(width: tokens.padM),
+              Expanded(
+                child: TextField(
+                  controller: controller,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(
+                    hintText: 'Where to?',
+                    hintStyle: TextStyle(color: Colors.white70),
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: onTapFilter,
+                icon: SvgPicture.asset(
+                  'assets/filterIcon.svg',
+                  width: 24,
+                  height: 24,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+--- F:\hotel_in\lib\screens\trips_screen.dart ---
+
+// â”€â”€ Â©HotelIn by Abdullah Studentâ„¢ â”€â”€ TripsScreen â”€â”€
+
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../theme/app_theme.dart';
+
+class TripsScreen extends StatefulWidget {
+  const TripsScreen({super.key});
+
+  @override
+  State<TripsScreen> createState() => _TripsScreenState();
+}
+
+class _TripsScreenState extends State<TripsScreen> {
+  late Future<List<_Trip>> _tripsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _tripsFuture = _loadTrips();
+  }
+
+  Future<List<_Trip>> _loadTrips() async {
+    // Simulate network delay
+    await Future.delayed(const Duration(milliseconds: 800));
+    return [
+      _Trip(
+        id: '101',
+        city: 'Paris',
+        dates: 'Jun 5â€“10',
+        image: 'assets/roomImg1.png',
+      ),
+      _Trip(
+        id: '102',
+        city: 'Tokyo',
+        dates: 'Jul 1â€“7',
+        image: 'assets/roomImg2.png',
+      ),
+      _Trip(
+        id: '201',
+        city: 'New York',
+        dates: 'Apr 12â€“15',
+        image: 'assets/roomImg3.png',
+        past: true,
+      ),
+    ];
+  }
+
+  Future<void> _refresh() async {
+    setState(() => _tripsFuture = _loadTrips());
+    await _tripsFuture;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final tokens = theme.extension<HotelInTokens>()!;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Your Trips', style: theme.textTheme.headlineSmall),
+        elevation: 0,
+      ),
+      body: FutureBuilder<List<_Trip>>(
+        future: _tripsFuture,
+        builder: (ctx, snap) {
+          if (snap.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snap.hasError) {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SvgPicture.asset('assets/closeIcon.svg', width: 48, height: 48, color: theme.colorScheme.error),
+                  SizedBox(height: tokens.padM),
+                  Text('Failed to load trips.', style: theme.textTheme.bodyMedium),
+                  SizedBox(height: tokens.padM),
+                  ElevatedButton(onPressed: _refresh, child: const Text('Retry')),
+                ],
+              ),
+            );
+          }
+          final trips = snap.data!;
+          final upcoming = trips.where((t) => !t.past).toList();
+          final past = trips.where((t) => t.past).toList();
+
+          if (upcoming.isEmpty && past.isEmpty) {
+            return Center(
+              child: Text(
+                'No trips found.\nStart planning your next adventure!',
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium,
+              ),
+            );
+          }
+
+          Widget buildSection(String title, List<_Trip> list) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: theme.textTheme.headlineSmall),
+                SizedBox(height: tokens.padS),
+                SizedBox(
+                  height: 180,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: list.length,
+                    separatorBuilder: (_, __) => SizedBox(width: tokens.padM),
+                    itemBuilder: (ctx, i) {
+                      final trip = list[i];
+                      return GestureDetector(
+                        onTap: () => GoRouter.of(context).go('/trips/${trip.id}'),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(tokens.radius),
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              Image.asset(
+                                trip.image,
+                                fit: BoxFit.cover,
+                              ),
+                              Container(
+                                decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
+                                    colors: [Colors.black54, Colors.transparent],
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(tokens.padS),
+                                child: Align(
+                                  alignment: Alignment.bottomLeft,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        trip.city,
+                                        style: theme.textTheme.bodyMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
+                                      ),
+                                      Text(
+                                        trip.dates,
+                                        style: theme.textTheme.bodySmall?.copyWith(color: Colors.white70),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: tokens.padL),
+              ],
+            );
+          }
+
+          return RefreshIndicator(
+            onRefresh: _refresh,
+            color: theme.colorScheme.primary,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: tokens.padM, vertical: tokens.padS),
+              child: Column(
+                children: [
+                  if (upcoming.isNotEmpty) buildSection('Upcoming Trips', upcoming),
+                  if (past.isNotEmpty)     buildSection('Past Trips', past),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _Trip {
+  final String id;
+  final String city;
+  final String dates;
+  final String image;
+  final bool past;
+  const _Trip({
+    required this.id,
+    required this.city,
+    required this.dates,
+    required this.image,
+    this.past = false,
+  });
+}
+
+--- F:\hotel_in\lib\theme\app_theme.dart ---
+
+// â”€â”€ Â©HotelIn by Abdullah Studentâ„¢ â”€â”€ app_theme.dart â”€â”€
+
+// ignore_for_file: deprecated_member_use
+
+import 'dart:ui';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+/// Design tokens for consistent spacing & radii
+class HotelInTokens extends ThemeExtension<HotelInTokens> {
+  final double borderRadius;
+  final double paddingSmall;
+  final double paddingMedium;
+  final double paddingLarge;
+
+  const HotelInTokens({
+    required this.borderRadius,
+    required this.paddingSmall,
+    required this.paddingMedium,
+    required this.paddingLarge,
+  });
+
+  double get padS => paddingSmall;
+  double get padM => paddingMedium;
+  double get padL => paddingLarge;
+  double get radius => borderRadius;
+
+  @override
+  HotelInTokens copyWith({
+    double? borderRadius,
+    double? paddingSmall,
+    double? paddingMedium,
+    double? paddingLarge,
+  }) {
+    return HotelInTokens(
+      borderRadius: borderRadius ?? this.borderRadius,
+      paddingSmall: paddingSmall ?? this.paddingSmall,
+      paddingMedium: paddingMedium ?? this.paddingMedium,
+      paddingLarge: paddingLarge ?? this.paddingLarge,
+    );
+  }
+
+  @override
+  HotelInTokens lerp(ThemeExtension<HotelInTokens>? other, double t) {
+    if (other is! HotelInTokens) return this;
+    return HotelInTokens(
+      borderRadius: lerpDouble(borderRadius, other.borderRadius, t)!,
+      paddingSmall: lerpDouble(paddingSmall, other.paddingSmall, t)!,
+      paddingMedium: lerpDouble(paddingMedium, other.paddingMedium, t)!,
+      paddingLarge: lerpDouble(paddingLarge, other.paddingLarge, t)!,
+    );
+  }
+}
+
+/// Centralized ThemeData for the Hotel In app
+class AppTheme {
+  // â”€â”€ Primary palette â”€â”€
+  static const Color _primary     = Color(0xFF2A2D3E);  // Charcoal
+  static const Color _secondary   = Color(0xFFB193C3);  // Dusty Lavender
+  static const Color _goldAccent  = Color(0xFFD4AF37);  // Gold
+  static const Color _emerald     = Color(0xFF50C878);  // Emerald
+  static const Color _surface     = Color(0xFFFFFCFA);  // Soft Ivory
+  static const Color _onSurface   = _primary;
+  static const Color _error       = Colors.redAccent;
+
+  // â”€â”€ Gradient for primary buttons â”€â”€
+  static const LinearGradient _buttonGradient = LinearGradient(
+    colors: [_primary, Color(0xFF4A4E6D)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static ThemeData get light {
+    final base = ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.light(
+        primary: _primary,
+        secondary: _secondary,
+        background: _surface,
+        surface: _surface,
+        onPrimary: Colors.white,
+        onSecondary: Colors.white,
+        onBackground: _onSurface,
+        onSurface: _onSurface,
+        error: _error,
+        onError: Colors.white,
+      ),
+      scaffoldBackgroundColor: _surface,
+
+      // â”€â”€ Typography â”€â”€
+      textTheme: GoogleFonts.poppinsTextTheme().copyWith(
+        displayLarge: GoogleFonts.playfairDisplay(
+          fontSize: 32, fontWeight: FontWeight.w700, color: _primary),
+        headlineSmall: GoogleFonts.playfairDisplay(
+          fontSize: 22, fontWeight: FontWeight.w600, color: _primary),
+        titleMedium: GoogleFonts.poppins(
+          fontSize: 18, fontWeight: FontWeight.w600, color: _primary),
+        bodyMedium: GoogleFonts.poppins(
+          fontSize: 16, fontWeight: FontWeight.w400, color: _primary),
+        bodySmall: GoogleFonts.poppins(
+          fontSize: 14, color: _primary.withOpacity(0.7)),
+      ),
+
+      // â”€â”€ AppBar â”€â”€
+      appBarTheme: AppBarTheme(
+        elevation: 0,
+        backgroundColor: _surface,
+        foregroundColor: _primary,
+        centerTitle: true,
+        titleTextStyle: GoogleFonts.playfairDisplay(
+          fontSize: 24, fontWeight: FontWeight.w700, color: _primary),
+        iconTheme: const IconThemeData(color: _primary),
+      ),
+
+      // â”€â”€ Elevated Button (Gradient) â”€â”€
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          padding: MaterialStateProperty.all(
+            const EdgeInsets.symmetric(vertical: 16, horizontal: 32)),
+          backgroundColor: MaterialStateProperty.resolveWith((states) {
+            // use gradient via Ink
+            return Colors.transparent;
+          }),
+          elevation: MaterialStateProperty.all(4),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          shadowColor: MaterialStateProperty.all(_primary.withOpacity(0.3)),
+          overlayColor: MaterialStateProperty.all(_goldAccent.withOpacity(0.1)),
+        ),
+      ),
+
+      // â”€â”€ Text Button â”€â”€
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: _secondary,
+          textStyle: GoogleFonts.poppins(
+            fontWeight: FontWeight.w600),
+        ),
+      ),
+
+      // â”€â”€ Input Decoration â”€â”€
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: Colors.grey.shade50,
+        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        hintStyle: GoogleFonts.poppins(
+          color: _primary.withOpacity(0.5), fontSize: 16),
+      ),
+
+      // â”€â”€ Chips â”€â”€
+      chipTheme: ChipThemeData(
+        backgroundColor: Colors.grey.shade200,
+        selectedColor: _secondary,
+        labelStyle: GoogleFonts.poppins(
+          fontSize: 14, fontWeight: FontWeight.w500, color: _primary),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+
+      // â”€â”€ Cards â”€â”€
+      cardTheme: CardTheme(
+        elevation: 2,
+        margin: const EdgeInsets.all(8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+
+      // â”€â”€ Bottom Navigation â”€â”€
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: _surface,
+        selectedItemColor: _primary,
+        unselectedItemColor: _primary.withOpacity(0.5),
+        showUnselectedLabels: true,
+        elevation: 8,
+      ),
+
+      // â”€â”€ Extensions â”€â”€
+      extensions: const <ThemeExtension<dynamic>>[
+        HotelInTokens(
+          borderRadius: 16,
+          paddingSmall: 8,
+          paddingMedium: 16,
+          paddingLarge: 24,
+        ),
+      ],
+    );
+
+    // Wrap with custom gradient button Ink
+    return base.copyWith(
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: base.elevatedButtonTheme.style?.copyWith(
+          backgroundColor: MaterialStateProperty.all(_primary),
+        ),
+      ),
+    );
+  }
+}
+
+--- F:\hotel_in\lib\widgets\custom_button.dart ---
+
+// â”€â”€â”€ Crafted by Abdullah Studentâ€™s QuickStay SquadÂ® â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+import 'package:flutter/material.dart';
+
+/// A reusable, customizable button that matches the QuickStay design system.
+/// Supports a label, optional leading icon, loading state, and adjustable padding.
+class CustomButton extends StatelessWidget {
+  /// The text label to display inside the button.
+  final String label;
+
+  /// Callback invoked when the user taps the button.
+  final VoidCallback onPressed;
+
+  /// Optional icon widget displayed before the label.
+  final Widget? leadingIcon;
+
+  /// Whether to show a loading spinner instead of the label/icon.
+  final bool isLoading;
+
+  /// Vertical padding inside the button.
+  final double verticalPadding;
+
+  /// Horizontal padding inside the button.
+  final double horizontalPadding;
+
+  const CustomButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+    this.leadingIcon,
+    this.isLoading = false,
+    this.verticalPadding = 14.0,
+    this.horizontalPadding = 24.0, required EdgeInsets padding,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return ElevatedButton(
+      onPressed: isLoading ? null : onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: theme.colorScheme.secondary,
+        padding: EdgeInsets.symmetric(
+          vertical: verticalPadding,
+          horizontal: horizontalPadding,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        elevation: 2,
+      ),
+      child: isLoading
+          ? SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation(theme.primaryColor),
+              ),
+            )
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (leadingIcon != null) ...[
+                  leadingIcon!,
+                  const SizedBox(width: 8),
+                ],
+                Text(
+                  label,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+}
+
+--- F:\hotel_in\lib\widgets\date_chips.dart ---
+
+// â”€â”€â”€ Crafted by Abdullah Studentâ€™s QuickStay SquadÂ® â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+import 'package:flutter/material.dart';
+
+class DateChips extends StatelessWidget {
+  final List<String> dates;
+  final int selectedIndex;
+  final ValueChanged<int> onSelected;
+
+  const DateChips({
+    super.key,
+    required this.dates,
+    required this.selectedIndex,
+    required this.onSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 36,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: dates.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (ctx, i) {
+          final sel = i == selectedIndex;
+          return ChoiceChip(
+            label: Text(dates[i]),
+            selected: sel,
+            onSelected: (_) => onSelected(i),
+            selectedColor: Theme.of(context).primaryColor,
+            backgroundColor: Colors.grey[200],
+          );
+        },
+      ),
+    );
+  }
+}
+
+--- F:\hotel_in\lib\widgets\property_card.dart ---
+
+// â”€â”€â”€ Crafted by Abdullah Studentâ€™s QuickStay SquadÂ® â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:hotel_in/theme/app_theme.dart';
+import 'package:shimmer/shimmer.dart';
+
+class PropertyCard extends StatelessWidget {
+  final String id;
+  final String title;
+  final String imageUrl;
+  final String price;
+  final double rating;
+
+  const PropertyCard({
+    super.key,
+    required this.id,
+    required this.title,
+    required this.imageUrl,
+    required this.price,
+    required this.rating,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = Theme.of(context).extension<HotelInTokens>()!;
+    return Hero(
+      tag: 'property-$id',
+      child: Material(
+        color: Colors.transparent,
+        child: Container(
+          margin: EdgeInsets.all(tokens.padM / 2),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(tokens.radius * 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 12,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          clipBehavior: Clip.hardEdge,
+          child: Stack(
+            children: [
+              // 1) Image with shimmer
+              CachedNetworkImage(
+                imageUrl: imageUrl,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+                placeholder: (ctx, url) => _buildShimmer(tokens),
+                errorWidget: (ctx, url, error) =>
+                    const Center(child: Icon(Icons.error_outline)),
+              ),
+
+              // 2) Gradient overlay for readability
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.center,
+                      colors: [
+                        Colors.black.withOpacity(0.6),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              // 3) Info panel
+              Positioned(
+                left: tokens.padM,
+                right: tokens.padM,
+                bottom: tokens.padM,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title
+                    Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(color: Colors.white),
+                    ),
+
+                    SizedBox(height: tokens.padS),
+
+                    // Rating & Price Row
+                    Row(
+                      children: [
+                        Icon(Icons.star, size: 18, color: Colors.amber),
+                        SizedBox(width: tokens.padS / 2),
+                        Text(
+                          rating.toStringAsFixed(1),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(color: Colors.white),
+                        ),
+
+                        // Spacer to push price to right
+                        const Spacer(),
+
+                        Text(
+                          price,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShimmer(HotelInTokens tokens) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(color: Colors.white),
+    );
+  }
+}
+
+--- F:\hotel_in\lib\widgets\search_bar.dart ---
+
+// â”€â”€â”€ Crafted by Abdullah Studentâ€™s QuickStay SquadÂ® â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hotel_in/theme/app_theme.dart';
+
+class PremiumSearchBar extends StatelessWidget {
+  final TextEditingController controller;
+  final VoidCallback onFilterTap;
+
+  const PremiumSearchBar({
+    super.key,
+    required this.controller,
+    required this.onFilterTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = Theme.of(context).extension<HotelInTokens>()!;
+    final radius = tokens.radius * 2;
+    final padH = tokens.padM;
+    final padV = tokens.padM;
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: padH),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(radius),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0D000000), // 5% opacity black
+            blurRadius: 8,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          hintText: 'Where to?',
+          filled: true,
+          fillColor: Colors.transparent,
+          contentPadding: EdgeInsets.symmetric(vertical: padV),
+          prefixIcon: SvgPicture.asset(
+            'assets/icons/searchIcon.svg',
+            width: 24,
+            height: 24,
+          ),
+          suffixIcon: IconButton(
+            icon: SvgPicture.asset(
+              'assets/icons/filterIcon.svg',
+              width: 24,
+              height: 24,
+            ),
+            onPressed: onFilterTap,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(radius),
+            borderSide: BorderSide.none,
+          ),
+        ),
+      ),
+    );
+  }
+}
